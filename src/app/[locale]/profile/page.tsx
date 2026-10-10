@@ -48,15 +48,15 @@ export default async function ProfilePage() {
             
             <div className="flex justify-between py-3 border-b">
               <span className="text-muted-foreground">Email Verified</span>
-              <span className={user.emailVerified ? 'text-green-600' : 'text-amber-600'}>
-                {user.emailVerified ? 'Yes' : 'No'}
+                <span className={(user as any).emailVerified ? 'text-green-600' : 'text-amber-600'}>
+                {(user as any).emailVerified ? 'Yes' : 'No'}
               </span>
             </div>
             
-            <div className="flex justify-between py-3">
+                        <div className="flex justify-between py-3">
               <span className="text-muted-foreground">Last Sign In</span>
               <span className="font-medium">
-                {user.lastSignIn ? new Date(user.lastSignIn).toLocaleDateString() : 'Never'}
+                {(user as any).lastSignIn ? new Date((user as any).lastSignIn).toLocaleDateString() : 'Never'}
               </span>
             </div>
           </div>
