@@ -19,12 +19,13 @@ export default async function TechnicianDashboard({ params }: { params: Promise<
   // For the hackathon demo, if the ID is generic, we can fallback to a mock fetch or use the session ID
   const technicianId = session.user.userId; 
   const response = await getTechnicianIncidentsAction(technicianId);
-  const incidents = response.success ? response.data : [];
+  const incidents = response.success ? response.data as any[] : [];
 
-  // Calculate quick stats
-  const openCount = incidents.filter(i => i.status === 'OPEN').length;
-  const inProgressCount = incidents.filter(i => i.status === 'IN_PROGRESS').length;
-  const resolvedCount = incidents.filter(i => i.status === 'RESOLVED').length;
+
+  // Calculate quick stats (explicitly typed to satisfy strict TypeScript in Demo Mode)
+  const openCount = incidents.filter((i: any) => i.status === 'OPEN').length;
+  const inProgressCount = incidents.filter((i: any) => i.status === 'IN_PROGRESS').length;
+  const resolvedCount = incidents.filter((i: any) => i.status === 'RESOLVED').length;
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto pb-20">
