@@ -1,28 +1,8 @@
-import NextAuth, { type DefaultSession } from 'next-auth';
+import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
-// Extend the session type to include our custom fields
-declare module 'next-auth' {
-  interface Session {
-    user: {
-      id: string;
-      userId?: string;
-      tenantId?: string;
-      role: string;
-      preferredLanguage?: string;
-      emailVerified?: boolean;
-      lastSignIn?: string;
-    } & DefaultSession['user'];
-  }
-  interface User {
-    userId?: string;
-    tenantId?: string;
-    role: string;
-    preferredLanguage?: string;
-    emailVerified?: boolean;
-    lastSignIn?: string;
-  }
-}
+// NOTE: We removed the 'declare module' block from here to prevent 
+// "identical modifiers" conflicts with other files in your project.
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
@@ -33,20 +13,25 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: 'Password', type: 'password' },
         role: { label: 'Role', type: 'text' }, 
       },
-      // 👇 ADDED 'Promise<any>' HERE TO BYPASS STRICT TS CHECKING
+      // Promise<any> bypasses NextAuth's strict internal return type checking
       async authorize(credentials): Promise<any> {
         if (credentials?.email && credentials?.password) {
+          
+          // Cast to string to fix the 'split' TypeScript error
+          const emailStr = credentials.email as string;
+          const roleStr = credentials.role as string;
+
           return {
             id: `user_${Date.now()}`,
-            userId: 'tech-001', // Added for demo compatibility
-            tenantId: 'turkana', // Added for demo compatibility
-            name: credentials.email.split('@')[0],
-            email: credentials.email,
-            role: credentials.role || 'TECHNICIAN',
-            preferredLanguage: 'en', // Added for demo compatibility
+            userId: 'tech-001', 
+            tenantId: 'turkana', 
+            name: emailStr.split('@')[0],
+            email: emailStr,
+            role: roleStr || 'TECHNICIAN',
+            preferredLanguage: 'en', 
             emailVerified: true,
             lastSignIn: new Date().toISOString(),
-          } as any; // 👇 BULLETPROOF BYPASS FOR NEXTAUTH STRICT TYPES
+          } as any; // Bulletproof bypass for NextAuth strict types
         }
         return null;
       },
@@ -56,7 +41,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     strategy: 'jwt',
   },
   callbacks: {
-    // 👇 ADDED ': any' TO BYPASS STRICT TS CHECKING
+    // : any bypasses strict token checking
     async jwt({ token, user, trigger, session }: any) {
       if (user) {
         token.userId = user.userId;
@@ -71,7 +56,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return token;
     },
-    // 👇 ADDED ': any' TO BYPASS STRICT TS CHECKING
+    // : any bypasses strict session checking
     async session({ session, token }: any) {
       if (session.user) {
         session.user.userId = token.userId;
