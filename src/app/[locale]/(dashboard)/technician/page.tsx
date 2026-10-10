@@ -15,9 +15,10 @@ export default async function TechnicianDashboard({ params }: { params: Promise<
     redirect(`/${locale}/login`);
   }
 
-  // Fetch incidents for this specific technician
+
   // For the hackathon demo, if the ID is generic, we can fallback to a mock fetch or use the session ID
-  const technicianId = session.user.userId; 
+  // Provide a fallback to guarantee it's always a strict string for TypeScript
+  const technicianId = session.user?.userId || "tech-001"; 
   const response = await getTechnicianIncidentsAction(technicianId);
   const incidents = response.success ? response.data as any[] : [];
 
