@@ -119,7 +119,9 @@ export async function getTechnicianIncidentsAction(technicianId: string) {
       },
     ];
     
-    return { success: true, data: mockIncidents };
+      // We use 'as any' here because our mock data omits the strict DynamoDB keys (PK, SK, etc.)
+    // required by the Incident type, but it contains all the UI fields we need for the demo.
+    return { success: true, data: mockIncidents as any };
   }
 
   // REAL AWS CODE
