@@ -65,7 +65,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           wardId: user.wardId,
           name: user.name,
           email: user.email,
-        };
+        } as any;
       }
     })
   ],
