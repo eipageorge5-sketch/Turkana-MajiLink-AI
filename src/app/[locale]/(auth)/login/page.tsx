@@ -29,13 +29,24 @@ export default function LoginPage() {
     });
 
     if (result?.error) {
-      setError('Invalid email or password.');
+      // Log the exact error to the browser console so we can see what NextAuth is complaining about
+      console.error("NextAuth Login Error:", result.error);
+      setError('Invalid email or password. Please check your credentials.');
       setLoading(false);
     } else {
-      // On success, redirect to the citizen dashboard (or their role-specific dashboard)
-      // For now, we'll just go to the root which will redirect based on role
-      router.push('/'); 
-      router.refresh();
+      // Extract locale from current pathname (e.g., '/en/login' -> 'en')
+      const locale = pathname.split('/')[1] || 'en';
+      
+      // Smart redirect based on the email for our demo
+      if (email.includes('tech')) {
+        router.push(`/${locale}/technician`);
+      } else if (email.includes('admin')) {
+        // Change this to your actual admin route if different
+        router.push(`/${locale}/admin`); 
+      } else {
+        // Fallback to technician dashboard for the demo
+        router.push(`/${locale}/technician`); 
+      }
     }
   };
 
@@ -102,7 +113,7 @@ export default function LoginPage() {
         </form>
 
         <div className="pt-4 border-t border-border text-center text-xs text-muted-foreground">
-          <p className="font-semibold mb-1">Hackathon Demo Credentials:</p>
+          <p className="font-semibold mb-1">George Demo Credentials:</p>
           <p>Admin: admin@majilink.com / password</p>
           <p>Tech: tech@majilink.com / password</p>
           <p>Citizen: citizen@majilink.com / password</p>
