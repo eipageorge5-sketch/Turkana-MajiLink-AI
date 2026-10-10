@@ -1,0 +1,91 @@
+{
+  "common": 
+  { "appName": "Turkana MajiLink AI", 
+  "loading": "Loading...", 
+  "offline": "You are offline. Reports will sync automatically.", 
+  "online": "You are online" },
+  "landing": { "title": "Smart Water Monitoring", 
+  "subtitle": "Reporting and tracking water infrastructure in Turkana.", 
+  "getStarted": "Get Started", "viewMap": "View Live Map" },
+  "login": { "title": "Sign In", 
+  "email": "Email Address", "password": "Password", 
+  "submit": "Sign In", "error": "Invalid email or password." },
+  "layout": { "logout": "Sign Out" },
+
+  "nav": 
+  { "home": "Home", 
+  "dashboard": "Dashboard", 
+  "map": "Map", 
+  "jobs": "Jobs", 
+  "assets": "Assets", 
+  "users": "Users", 
+  "settings": "Settings", 
+  "myReports": "My Reports", 
+  "profile": "Profile" },
+
+  "dashboard": 
+  { "adminTitle": "County Command Center", 
+  "adminDesc": "Monitor water infrastructure health and incident response across Turkana.", "citizenTitle": "Welcome back", "reportIssue": "Report an Issue", "reportIssueDesc": "Report a broken tap, dry borehole, or contamination.", "viewMap": "View Water Map", "viewMapDesc": "See nearby water points and their status.", "techTitle": "Technician Job Board", "techDesc": "View and manage your assigned repair jobs." },
+  
+  "map": 
+  { "title": "Water Infrastructure Map", 
+  "legendHealthy": "Healthy", 
+  "legendWarning": "Warning", 
+  "legendCritical": "Critical", 
+  "statusHealthy": "Healthy", 
+  "statusWarning": "Needs Attention", 
+  "statusCritical": "Critical", 
+  "type": "Type", 
+  "owner": "Ownership", 
+  "incidents": "Incidents", 
+  "reportedIssues": "reported issues", 
+  "reportIssueHere": "Report an Issue Here", 
+
+  "types": 
+  { "BOREHOLE": "Borehole", 
+  "WATER_KIOSK": "Water Kiosk", 
+  "TAP_STAND": "Tap Stand", 
+  "WELL": "Well", 
+  "DAM": "Dam", 
+  "SPRING": "Spring", 
+
+  "WATER_PAN": 
+  "Water Pan" }, "owners": { "COUNTY": "County Government", "NGO": "NGO", "COMMUNITY": "Community", "PRIVATE": "Private" } },
+  
+  "assets": {
+    "title": "Asset Management",
+    "description": "Register new water points manually or import existing records in bulk.",
+    "manualTitle": "Manual Registration",
+    "csvTitle": "Bulk CSV Import"
+  },
+
+  "report": {
+  "title": "Report an Issue",
+  "reportingFor": "Reporting for",
+  "issueType": "Issue Type",
+  "description": "Description",
+  "descriptionPlaceholder": "Briefly describe the problem (e.g., no water flow, broken pipe)...",
+  "submit": "Submit Report",
+  "successTitle": "Report Received!",
+  "successMessage": "Your report has been logged. Please save this tracking ID to check the status later.",
+  "trackingId": "Your Tracking ID",
+  "close": "Close",
+  "savedOfflineTitle": "Saved Offline!",
+"savedOfflineMessage": "No internet connection. Your report is saved locally and will automatically sync when you reconnect."
+},
+
+"technician": {
+  "title": "Technician Job Board",
+  "subtitle": "View, accept, and resolve assigned water infrastructure repairs.",
+  "statOpen": "Open",
+  "statProgress": "In Progress",
+  "statResolved": "Resolved",
+  "assignedJobs": "Assigned Jobs",
+  "noJobs": "All caught up!",
+  "noJobsDesc": "You have no pending repair assignments at the moment.",
+  "tracking": "Tracking ID",
+  "acceptJob": "Accept Job",
+  "markResolved": "Mark Resolved",
+  "resolved": "Resolved"
+}
+}

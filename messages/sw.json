@@ -1,0 +1,43 @@
+{
+  "common": { "appName": "Turkana MajiLink AI", "loading": "Inapakia...", "offline": "Hauko mtandaoni. Ripoti zitasawazishwa kiotomatiki.", "online": "Uko mtandaoni" },
+  "landing": { "title": "Ufuatiliaji wa Maji wa Kisasa", "subtitle": "Kuripoti na kufuatilia miundombinu ya maji Turkana.", "getStarted": "Anza Sasa", "viewMap": "Tazama Ramani" },
+  "login": { "title": "Ingia", "email": "Barua Pepe", "password": "Nenosiri", "submit": "Ingia", "error": "Barua pepe au nenosiri si sahihi." },
+  "layout": { "logout": "Ondoka" },
+  "nav": { "home": "Nyumbani", "dashboard": "Dashibodi", "map": "Ramani", "jobs": "Kazi", "assets": "Rasilimali", "users": "Watumiaji", "settings": "Mipangilio", "myReports": "Ripoti Zangu", "profile": "Wasifu" },
+  "dashboard": { "adminTitle": "Kituo cha Amri cha Kaunti", "adminDesc": "Fuatilia afya ya miundombinu ya maji na majibu ya matukio kote Turkana.", "citizenTitle": "Karibu tena", "reportIssue": "Ripoti Tatizo", "reportIssueDesc": "Ripoti bomba lililovunjika, shimo la maji lililokauka, au uchafuzi.", "viewMap": "Tazama Ramani ya Maji", "viewMapDesc": "Tazama vituo vya maji vilivyo karibu na hali yake.", "techTitle": "Bodi ya Kazi ya Fundi", "techDesc": "Tazama na simamia kazi za ukarabati zilizogawiwa kwako." },
+  "map": { "title": "Ramani ya Miundombinu ya Maji", "legendHealthy": "Bora", "legendWarning": "Onyo", "legendCritical": "Hatari", "statusHealthy": "Bora", "statusWarning": "Inahitaji Umakini", "statusCritical": "Hatari", "type": "Aina", "owner": "Umiliki", "incidents": "Matukio", "reportedIssues": "matukio yaliyoripotiwa", "reportIssueHere": "Ripoti Tatizo Hapa", "types": { "BOREHOLE": "Shimo la Maji", "WATER_KIOSK": "Kiosk ya Maji", "TAP_STAND": "Kituo cha Bomba", "WELL": "Kisima", "DAM": "Bwawa", "SPRING": "Chemchemi", "WATER_PAN": "Dimbwi la Maji" }, "owners": { "COUNTY": "Serikali ya Kaunti", "NGO": "NGO", "COMMUNITY": "Jamii", "PRIVATE": "Binafsi" } },
+  "assets": {
+    "title": "Usimamizi wa Rasilimali",
+    "description": "Sajili vituo vipya vya maji kwa mikono au ingiza rekodi zilizopo kwa wingi.",
+    "manualTitle": "Usajili wa Mwongozo",
+    "csvTitle": "Uingizaji wa Wingi wa CSV"
+  },
+
+  "report": {
+  "title": "Ripoti Tatizo",
+  "reportingFor": "Inaripotiwa kwa",
+  "issueType": "Aina ya Tatizo",
+  "description": "Maelezo",
+  "descriptionPlaceholder": "Eleza tatizo kwa ufupi (mf. hakuna maji, bomba limevunjika)...",
+  "submit": "Wasilisha Ripoti",
+  "successTitle": "Ripoti Imepokelewa!",
+  "successMessage": "Ripoti yako imehifadhiwa. Tafadhali hifadhi kitambulisho hiki ili ukague hali yake baadaye.",
+  "trackingId": "Kitambulisho chako cha Ufuatiliaji",
+  "close": "Funga"
+},
+
+"technician": {
+  "title": "Bodi ya Kazi ya Fundi",
+  "subtitle": "Tazama, kubali, na ukamilishe ukarabati wa miundombinu ya maji uliogawiwa.",
+  "statOpen": "Wazi",
+  "statProgress": "Inaendelea",
+  "statResolved": "Imekamilika",
+  "assignedJobs": "Kazi Zilizogawiwa",
+  "noJobs": "Huna kazi kwa sasa!",
+  "noJobsDesc": "Huna kazi za ukarabati zilizokungojea kwa sasa.",
+  "tracking": "Kitambulisho",
+  "acceptJob": "Kubali Kazi",
+  "markResolved": "Alama kama Imekamilika",
+  "resolved": "Imekamilika"
+}
+}
