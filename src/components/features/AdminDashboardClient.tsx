@@ -77,9 +77,12 @@ export function AdminDashboardClient({ initialData }: AdminDashboardClientProps)
               <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full border border-white/30">LIVE</span>
             </h3>
             <p className="text-white/90 mt-1 text-sm md:text-base">{aiAlert.message}</p>
-            <button className="mt-3 text-xs font-semibold bg-white text-purple-600 px-3 py-1.5 rounded-md hover:bg-white/90 transition-colors">
-              View AI Analysis
-            </button>
+                      <button 
+            onClick={() => alert("🤖 AI Deep Dive Analysis:\n\n• Pump #12 (Kanamkemer): 87% failure probability within 14 days.\n• Root Cause: Abnormal vibration patterns detected.\n• Recommended Action: Schedule bearing replacement.\n• Estimated Cost: $150.")}
+            className="mt-3 text-xs font-semibold bg-white text-purple-600 px-3 py-1.5 rounded-md hover:bg-white/90 transition-colors cursor-pointer"
+          >
+            View AI Analysis
+          </button>
           </div>
         </div>
       </div>
