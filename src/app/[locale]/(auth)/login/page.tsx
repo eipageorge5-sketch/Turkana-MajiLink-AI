@@ -38,6 +38,9 @@ export default function LoginPage() {
     } else if (email.includes('committee')) {
       demoRole = 'COMMITTEE_LEADER';
       targetRoute = '/committee'; // <-- ADDED: The magic fix!
+    } else if (email.includes('ngo')) {
+      demoRole = 'NGO_PARTNER';
+      targetRoute = '/ngo';
     }
 
     // 2. Pass the correct role to NextAuth so the proxy.ts middleware approves it
@@ -125,6 +128,9 @@ export default function LoginPage() {
           <p>Admin: admin@majilink.com / password</p>
           <p>Tech: tech@majilink.com / password</p>
           <p>Citizen: citizen@majilink.com / password</p>
+          <p>County Official: county@majilink.com / password</p>
+          <p>Committee Leader: committee@majilink.com / password</p>
+          <p>NGO Partner: ngo@majilink.com / password</p>
         </div>
       </div>
     </main>

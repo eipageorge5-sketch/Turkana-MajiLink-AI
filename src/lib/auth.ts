@@ -48,6 +48,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             id: "citizen-001", email: "citizen@majilink.com", password: "password", 
             name: "Jane Citizen", role: UserRoles.CITIZEN, tenantId: "turkana", 
             preferredLanguage: SupportedLocales.EN 
+          },
+                    { 
+            id: "ngo-001", email: "ngo@majilink.com", password: "password", 
+            name: "UNICEF Partner", role: "NGO_PARTNER", tenantId: "turkana", 
+            preferredLanguage: SupportedLocales.EN 
           }
         ];
 
