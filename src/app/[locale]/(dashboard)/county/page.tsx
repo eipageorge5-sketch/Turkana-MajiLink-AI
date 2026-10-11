@@ -20,8 +20,9 @@ export default async function CountyDashboardPage({ params }: { params: Promise<
       { ward: 'Kakuma', totalPumps: 50, brokenPumps: 2, health: 96 },
     ],
     escalations: [
-      { id: "ESC-001", location: "Lokichar - Borehole 4", issue: "Total pump failure, no water for 3 days", priority: "CRITICAL", daysOpen: 3 },
-      { id: "ESC-002", location: "Kanamkemer - Tank 2", issue: "Severe leakage reported by 5 citizens", priority: "HIGH", daysOpen: 2 },
+      // The "as const" tells TypeScript this is exactly 'PENDING', not just any string
+      { id: "ESC-001", location: "Lokichar - Borehole 4", issue: "Total pump failure, no water for 3 days", priority: "CRITICAL", daysOpen: 3, status: 'PENDING' as const },
+      { id: "ESC-002", location: "Kanamkemer - Tank 2", issue: "Severe leakage reported by 5 citizens", priority: "HIGH", daysOpen: 2, status: 'PENDING' as const },
     ],
     leaderboard: [
       { rank: 1, name: 'John Tech', ward: 'Kanamkemer', resolved: 14 },

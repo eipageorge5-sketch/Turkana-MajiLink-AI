@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { 
   Map, AlertOctagon, Trophy, Droplets, 
-  Clock, TrendingDown, Medal, CheckCircle, Zap
+  Clock, TrendingDown, Medal, CheckCircle, Zap,
+  FileText, Loader2, Mail
 } from 'lucide-react';
 
 interface Escalation {
@@ -26,15 +27,30 @@ interface CountyDashboardClientProps {
 export function CountyDashboardClient({ initialData }: CountyDashboardClientProps) {
   const { wardStats, leaderboard } = initialData;
   
-  // Add state to handle interactive approvals
+  // State for interactive approvals
   const [escalations, setEscalations] = useState<Escalation[]>(
     initialData.escalations.map(e => ({ ...e, status: 'PENDING' }))
   );
+
+  // State for the Report Generator
+  const [reportState, setReportState] = useState<'idle' | 'generating' | 'sent'>('idle');
 
   const handleApprove = (id: string) => {
     setEscalations(prev => 
       prev.map(e => e.id === id ? { ...e, status: 'FUNDED' } : e)
     );
+  };
+
+  const handleGenerateReport = () => {
+    setReportState('generating');
+    // Simulate a 1.5 second API call to generate the PDF
+    setTimeout(() => {
+      setReportState('sent');
+      alert("📄 Monthly Report Generated!\n\n• 142 Waterpoints Analyzed\n• 85% Resolution Rate\n• 3 Critical Escalations Flagged\n\n Report successfully emailed to county@majilink.com and the Governor's office.");
+      
+      // Reset back to idle after 3 seconds so it can be clicked again
+      setTimeout(() => setReportState('idle'), 3000);
+    }, 1500);
   };
 
   const getHealthColor = (health: number) => {
@@ -45,13 +61,32 @@ export function CountyDashboardClient({ initialData }: CountyDashboardClientProp
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-20">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
-          <Map className="h-8 w-8 text-primary" />
-          County Oversight Dashboard
-        </h1>
-        <p className="text-muted-foreground mt-1">Regional performance and critical escalations.</p>
+      {/* Header with Report Button */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
+            <Map className="h-8 w-8 text-primary" />
+            County Oversight Dashboard
+          </h1>
+          <p className="text-muted-foreground mt-1">Regional performance and critical escalations.</p>
+        </div>
+
+        {/* The Magic Report Button */}
+        <button
+          onClick={handleGenerateReport}
+          disabled={reportState !== 'idle'}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-semibold text-sm transition-all cursor-pointer shadow-sm ${
+            reportState === 'sent' 
+              ? 'bg-green-600 text-white hover:bg-green-700' 
+              : reportState === 'generating'
+              ? 'bg-muted text-muted-foreground cursor-wait'
+              : 'bg-foreground text-background hover:bg-foreground/90'
+          }`}
+        >
+          {reportState === 'idle' && <><FileText className="h-4 w-4" /> Generate Monthly Report</>}
+          {reportState === 'generating' && <><Loader2 className="h-4 w-4 animate-spin" /> Generating PDF...</>}
+          {reportState === 'sent' && <><CheckCircle className="h-4 w-4" /> Report Sent!</>}
+        </button>
       </div>
 
       {/* 1. Ward Performance Grid */}
@@ -82,7 +117,7 @@ export function CountyDashboardClient({ initialData }: CountyDashboardClientProp
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* 2. Escalation Queue (NOW INTERACTIVE!) */}
+        {/* 2. Escalation Queue */}
         <div className="space-y-4">
           <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
             <AlertOctagon className="h-5 w-5 text-destructive" />
