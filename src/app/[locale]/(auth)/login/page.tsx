@@ -17,7 +17,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-        const handleSubmit = async (e: React.FormEvent) => {
+     const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
@@ -35,6 +35,9 @@ export default function LoginPage() {
     } else if (email.includes('county')) {
       demoRole = 'COUNTY_OFFICIAL';
       targetRoute = '/county';
+    } else if (email.includes('committee')) {
+      demoRole = 'COMMITTEE_LEADER';
+      targetRoute = '/committee'; // <-- ADDED: The magic fix!
     }
 
     // 2. Pass the correct role to NextAuth so the proxy.ts middleware approves it
@@ -51,7 +54,6 @@ export default function LoginPage() {
       setLoading(false);
     } else {
       // 3. next-intl router automatically adds the '/en' prefix for us!
-      // We just give it the clean route name.
       router.push(targetRoute);
     }
   };
