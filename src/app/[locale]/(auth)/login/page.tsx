@@ -17,7 +17,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-    const handleSubmit = async (e: React.FormEvent) => {
+      const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
@@ -25,8 +25,8 @@ export default function LoginPage() {
     const result = await signIn('credentials', {
       email,
       password,
-      role: 'TECHNICIAN', // Explicitly pass the role for the demo
-      redirect: false, // We handle redirection manually
+      role: 'TECHNICIAN',
+      redirect: false,
     });
 
     if (result?.error) {
@@ -34,8 +34,9 @@ export default function LoginPage() {
       setError('Invalid email or password. Please check your credentials.');
       setLoading(false);
     } else {
-      // BULLETPROOF DEMO REDIRECT: Go exactly to the URL we know works
-      router.push('/en/technician');
+      // next-intl router automatically adds the '/en' prefix for us!
+      // We just give it the route name.
+      router.push('/technician');
     }
   };
 
