@@ -1,25 +1,36 @@
-import { useTranslations } from 'next-intl';
+import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
+import { AdminDashboardClient } from '@/components/features/AdminDashboardClient';
 
-export default function AdminDashboard() {
-  const t = useTranslations('dashboard');
-  return (
-    <div className="space-y-4">
-      <h1 className="text-3xl font-bold text-foreground">{t('adminTitle')}</h1>
-      <p className="text-muted-foreground">{t('adminDesc')}</p>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-        <div className="p-6 bg-card border-2 border-border rounded-xl">
-          <p className="text-sm font-medium text-muted-foreground">Active Incidents</p>
-          <p className="text-4xl font-bold text-primary mt-2">24</p>
-        </div>
-        <div className="p-6 bg-card border-2 border-border rounded-xl">
-          <p className="text-sm font-medium text-muted-foreground">Healthy Water Points</p>
-          <p className="text-4xl font-bold text-success mt-2">85%</p>
-        </div>
-        <div className="p-6 bg-card border-2 border-border rounded-xl">
-          <p className="text-sm font-medium text-muted-foreground">Pending Verifications</p>
-          <p className="text-4xl font-bold text-warning mt-2">7</p>
-        </div>
-      </div>
-    </div>
-  );
+export default async function AdminDashboardPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  
+  // 1. Security Check: Ensure the user is an Admin or County Official
+  const session = await auth();
+  if (!session?.user || (session.user.role !== 'ADMIN' && session.user.role !== 'COUNTY_OFFICIAL')) {
+    redirect(`/${locale}/login`);
+  }
+
+  // 2. Mock Data for the Conference Demo
+  // In production, this would come from DynamoDB analytics
+  const demoData = {
+    stats: {
+      totalWaterpoints: 142,
+      activeTechnicians: 12,
+      openIncidents: 5,
+      resolutionRate: 85,
+    },
+    aiAlert: {
+      title: "AI Predictive Maintenance Alert",
+      message: "3 pumps in Ward Kanamkemer are showing early signs of mechanical failure based on recent vibration reports.",
+    },
+    recentReports: [
+      { id: "RPT-001", location: "Ward Kanamkemer - Pump 12", issue: "Low Water Pressure", time: "10 mins ago", status: "OPEN", priority: "HIGH" },
+      { id: "RPT-002", location: "Ward Lopei - Borehole 4", issue: "Unusual Pump Noise", time: "1 hour ago", status: "IN_PROGRESS", priority: "MEDIUM" },
+      { id: "RPT-003", location: "Ward Lokichar - Tank 2", issue: "Pipe Leakage", time: "3 hours ago", status: "RESOLVED", priority: "LOW" },
+    ]
+  };
+
+  // 3. Pass data to the Client Component
+  return <AdminDashboardClient initialData={demoData} />;
 }
