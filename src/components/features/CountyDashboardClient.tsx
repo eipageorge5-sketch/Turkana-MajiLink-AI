@@ -1,20 +1,41 @@
 'use client';
 
+import { useState } from 'react';
 import { 
-  Map, AlertOctagon, Trophy, Droplets, Wrench, 
-  Clock, TrendingDown, Medal 
+  Map, AlertOctagon, Trophy, Droplets, 
+  Clock, TrendingDown, Medal, CheckCircle, Zap
 } from 'lucide-react';
+
+interface Escalation {
+  id: string;
+  location: string;
+  issue: string;
+  priority: string;
+  daysOpen: number;
+  status: 'PENDING' | 'FUNDED';
+}
 
 interface CountyDashboardClientProps {
   initialData: {
     wardStats: { ward: string; totalPumps: number; brokenPumps: number; health: number }[];
-    escalations: { id: string; location: string; issue: string; priority: string; daysOpen: number }[];
+    escalations: Escalation[];
     leaderboard: { rank: number; name: string; ward: string; resolved: number }[];
   };
 }
 
 export function CountyDashboardClient({ initialData }: CountyDashboardClientProps) {
-  const { wardStats, escalations, leaderboard } = initialData;
+  const { wardStats, leaderboard } = initialData;
+  
+  // Add state to handle interactive approvals
+  const [escalations, setEscalations] = useState<Escalation[]>(
+    initialData.escalations.map(e => ({ ...e, status: 'PENDING' }))
+  );
+
+  const handleApprove = (id: string) => {
+    setEscalations(prev => 
+      prev.map(e => e.id === id ? { ...e, status: 'FUNDED' } : e)
+    );
+  };
 
   const getHealthColor = (health: number) => {
     if (health >= 95) return 'text-green-600 bg-green-100 border-green-200';
@@ -61,7 +82,7 @@ export function CountyDashboardClient({ initialData }: CountyDashboardClientProp
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* 2. Escalation Queue */}
+        {/* 2. Escalation Queue (NOW INTERACTIVE!) */}
         <div className="space-y-4">
           <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
             <AlertOctagon className="h-5 w-5 text-destructive" />
@@ -72,14 +93,38 @@ export function CountyDashboardClient({ initialData }: CountyDashboardClientProp
               <div key={esc.id} className={`p-4 ${index !== escalations.length - 1 ? 'border-b border-border' : ''}`}>
                 <div className="flex justify-between items-start mb-2">
                   <span className="font-bold text-foreground text-sm">{esc.location}</span>
-                  <span className="px-2 py-0.5 rounded text-xs font-bold bg-destructive text-destructive-foreground">
-                    {esc.priority}
+                  <span className={`px-2 py-0.5 rounded text-xs font-bold ${
+                    esc.status === 'FUNDED' 
+                      ? 'bg-green-100 text-green-700 border border-green-200' 
+                      : 'bg-destructive text-destructive-foreground'
+                  }`}>
+                    {esc.status}
                   </span>
                 </div>
                 <p className="text-sm text-muted-foreground mb-3">{esc.issue}</p>
-                <div className="flex items-center gap-1 text-xs text-destructive font-semibold">
-                  <Clock className="h-3.5 w-3.5" />
-                  Unresolved for {esc.daysOpen} days
+                
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1 text-xs text-destructive font-semibold">
+                    <Clock className="h-3.5 w-3.5" />
+                    Unresolved for {esc.daysOpen} days
+                  </div>
+                  
+                  {esc.status === 'PENDING' && (
+                    <button
+                      onClick={() => handleApprove(esc.id)}
+                      className="flex items-center gap-1 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-colors cursor-pointer"
+                    >
+                      <Zap className="h-3.5 w-3.5" />
+                      Approve & Dispatch
+                    </button>
+                  )}
+                  
+                  {esc.status === 'FUNDED' && (
+                    <div className="flex items-center gap-1 text-xs text-green-700 font-bold">
+                      <CheckCircle className="h-3.5 w-3.5" />
+                      Technician Dispatched
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
