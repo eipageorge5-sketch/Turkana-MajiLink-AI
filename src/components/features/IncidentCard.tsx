@@ -28,6 +28,7 @@ export function IncidentCard({ incident, technicianId }: IncidentCardProps) {
   };
 
   const handleStatusUpdate = async (newStatus: string) => {
+    alert(`BUTTON CLICKED! Trying to update to: ${newStatus}`); 
     console.log("Button clicked! Updating to:", newStatus); // <-- ADDED: For debugging
     setIsUpdating(true);
     const resolvedAt = newStatus === IncidentStatuses.RESOLVED ? new Date().toISOString() : undefined;
