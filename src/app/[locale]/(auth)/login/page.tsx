@@ -8,11 +8,11 @@ import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
 import { Droplets, Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
-  const t = useTranslations('login'); // We'll add these keys to dictionaries shortly
+  const t = useTranslations('login'); 
   const router = useRouter();
   const pathname = usePathname();
   
-  const [email, setEmail] = useState('admin@majilink.com');
+  const [email, setEmail] = useState('tech@majilink.com'); // Default to tech for easy demo
   const [password, setPassword] = useState('password');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -29,7 +29,6 @@ export default function LoginPage() {
     });
 
     if (result?.error) {
-      // Log the exact error to the browser console so we can see what NextAuth is complaining about
       console.error("NextAuth Login Error:", result.error);
       setError('Invalid email or password. Please check your credentials.');
       setLoading(false);
@@ -41,7 +40,6 @@ export default function LoginPage() {
       if (email.includes('tech')) {
         router.push(`/${locale}/technician`);
       } else if (email.includes('admin')) {
-        // Change this to your actual admin route if different
         router.push(`/${locale}/admin`); 
       } else {
         // Fallback to technician dashboard for the demo
@@ -77,7 +75,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="flex h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-              placeholder="admin@majilink.com"
+              placeholder="tech@majilink.com"
             />
           </div>
 
