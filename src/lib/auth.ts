@@ -21,9 +21,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         // ==========================================
         // HACKATHON MOCK AUTHENTICATION
-        // In production, this will query DynamoDB:
-        // const user = await userRepo.findByEmail(credentials.email as string);
-        // if (user && await bcrypt.compare(credentials.password, user.passwordHash)) { ... }
         // ==========================================
         
         const mockUsers = [
@@ -41,6 +38,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             id: "tech-001", email: "tech@majilink.com", password: "password", 
             name: "John Tech", role: UserRoles.TECHNICIAN, tenantId: "turkana", 
             wardId: "ward-kanamkemer", preferredLanguage: SupportedLocales.SW 
+          },
+          { 
+            id: "committee-001", email: "committee@majilink.com", password: "password", 
+            name: "Village Leader", role: "COMMITTEE_LEADER", tenantId: "turkana", 
+            wardId: "ward-kakuma-zone4", preferredLanguage: SupportedLocales.EN 
           },
           { 
             id: "citizen-001", email: "citizen@majilink.com", password: "password", 
