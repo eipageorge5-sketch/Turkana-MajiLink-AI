@@ -58,7 +58,9 @@ export default auth((req) => {
         [UserRoles.CITIZEN]: '/citizen',
       };
       
-      const targetDashboard = defaultDashboards[userRole] || '/citizen';
+            // DEMO SAFE FALLBACK: If we don't know their exact dashboard, 
+      // always send them to the technician dashboard so they never see a 404.
+      const targetDashboard = defaultDashboards[userRole] || '/technician'; 
       const redirectPath = `/${locale}${targetDashboard}`;
       return NextResponse.redirect(new URL(redirectPath, nextUrl.origin));
     }
