@@ -2,21 +2,20 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Incident } from '@/db/schema';
 import { updateIncidentStatusAction } from '@/actions/incidents';
-import { AlertTriangle, Clock, MapPin, CheckCircle2, Loader2, Wrench } from 'lucide-react';
+import { Clock, MapPin, CheckCircle2, Loader2, Wrench } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { IncidentStatuses } from '@/lib/constants';
 
 interface IncidentCardProps {
   incident: any;
   technicianId: string;
+  onStatusChange?: (incidentId: string, newStatus: string) => void; // <-- ADDED: To talk to parent
 }
 
-export function IncidentCard({ incident, technicianId }: IncidentCardProps) {
+export function IncidentCard({ incident, technicianId, onStatusChange }: IncidentCardProps) {
   const t = useTranslations('technician');
   const router = useRouter();
-  // Track the status locally so we can update it instantly
   const [localStatus, setLocalStatus] = useState(incident.status);
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -31,9 +30,7 @@ export function IncidentCard({ incident, technicianId }: IncidentCardProps) {
 
   const handleStatusUpdate = async (newStatus: string) => {
     setIsUpdating(true);
-    
-    // OPTIMISTIC UPDATE: Update UI immediately for instant feedback
-    setLocalStatus(newStatus);
+    setLocalStatus(newStatus); // Instant UI update for the card
     
     const resolvedAt = newStatus === IncidentStatuses.RESOLVED ? new Date().toISOString() : undefined;
     
@@ -45,18 +42,19 @@ export function IncidentCard({ incident, technicianId }: IncidentCardProps) {
         resolvedAt
       );
 
-      if (!res.success) {
-        // If it fails, revert back
-        setLocalStatus(incident.status);
-        alert(res.message || "Failed to update status");
-      } else {
-        // Success! Refresh the page to sync with server
+      if (res.success) {
+        // TELL THE PARENT PAGE TO UPDATE THE TOP STATS!
+        if (onStatusChange) {
+          onStatusChange(incident.incidentId, newStatus);
+        }
         router.refresh();
+      } else {
+        setLocalStatus(incident.status); // Revert on failure
+        alert(res.message || "Failed to update status");
       }
     } catch (error) {
-      console.error("Error updating status:", error);
+      console.error("Error:", error);
       setLocalStatus(incident.status);
-      alert("An error occurred while updating the status");
     } finally {
       setIsUpdating(false);
     }
@@ -72,7 +70,6 @@ export function IncidentCard({ incident, technicianId }: IncidentCardProps) {
 
   return (
     <div className="bg-card border-2 border-border rounded-xl p-4 space-y-4 shadow-sm hover:shadow-md transition-shadow">
-      {/* Header: Priority & Time */}
       <div className="flex items-center justify-between">
         <span className={`px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${getPriorityStyles(incident.priority)}`}>
           {incident.priority}
@@ -83,7 +80,6 @@ export function IncidentCard({ incident, technicianId }: IncidentCardProps) {
         </span>
       </div>
 
-      {/* Content */}
       <div className="space-y-2">
         <h3 className="text-lg font-bold text-foreground flex items-start gap-2">
           <MapPin className="h-5 w-5 text-primary mt-0.5 shrink-0" />
@@ -102,9 +98,7 @@ export function IncidentCard({ incident, technicianId }: IncidentCardProps) {
         </p>
       </div>
 
-      {/* Action Buttons */}
       <div className="flex gap-2 pt-2 border-t border-border">
-        {/* Use localStatus instead of incident.status for instant UI updates */}
         {localStatus === IncidentStatuses.OPEN && (
           <button
             onClick={() => handleStatusUpdate(IncidentStatuses.IN_PROGRESS)}
