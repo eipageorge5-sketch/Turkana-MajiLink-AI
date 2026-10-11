@@ -17,15 +17,31 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-      const handleSubmit = async (e: React.FormEvent) => {
+        const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
+    // 1. Determine the role and target route based on the email for our demo
+    let demoRole = 'CITIZEN';
+    let targetRoute = '/citizen'; // Fallback
+
+    if (email.includes('admin')) {
+      demoRole = 'ADMIN';
+      targetRoute = '/admin';
+    } else if (email.includes('tech')) {
+      demoRole = 'TECHNICIAN';
+      targetRoute = '/technician';
+    } else if (email.includes('county')) {
+      demoRole = 'COUNTY_OFFICIAL';
+      targetRoute = '/county';
+    }
+
+    // 2. Pass the correct role to NextAuth so the proxy.ts middleware approves it
     const result = await signIn('credentials', {
       email,
       password,
-      role: 'TECHNICIAN',
+      role: demoRole, 
       redirect: false,
     });
 
@@ -34,9 +50,9 @@ export default function LoginPage() {
       setError('Invalid email or password. Please check your credentials.');
       setLoading(false);
     } else {
-      // next-intl router automatically adds the '/en' prefix for us!
-      // We just give it the route name.
-      router.push('/technician');
+      // 3. next-intl router automatically adds the '/en' prefix for us!
+      // We just give it the clean route name.
+      router.push(targetRoute);
     }
   };
 
