@@ -50,14 +50,13 @@ export default auth((req) => {
     if (!userRole || !requiredRoles.includes(userRole)) {
       // Unauthorized: Redirect to their specific dashboard or a 403 page
       const defaultDashboards: Record<string, string> = {
-        [UserRoles.ADMIN]: '/admin',
-        [UserRoles.COUNTY_OFFICIAL]: '/county',
-        [UserRoles.NGO_STAFF]: '/ngo',
-        [UserRoles.COMMITTEE_LEADER]: '/committee',
-        [UserRoles.TECHNICIAN]: '/technician',
-        [UserRoles.CITIZEN]: '/citizen',
-      };
-      
+  ADMIN: '/admin',
+  TECHNICIAN: '/technician',
+  COUNTY_OFFICIAL: '/county',
+  COMMITTEE_LEADER: '/committee',
+  NGO_PARTNER: '/ngo', // <-- ADD THIS LINE!
+  CITIZEN: '/citizen',
+}; 
             // DEMO SAFE FALLBACK: If we don't know their exact dashboard, 
       // always send them to the technician dashboard so they never see a 404.
       const targetDashboard = defaultDashboards[userRole] || '/technician'; 
