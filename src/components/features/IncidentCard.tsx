@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation'; // <-- ADDED: To refresh the UI after update
+import { useRouter } from 'next/navigation';
 import { Incident } from '@/db/schema';
 import { updateIncidentStatusAction } from '@/actions/incidents';
 import { AlertTriangle, Clock, MapPin, CheckCircle2, Loader2, Wrench } from 'lucide-react';
@@ -9,13 +9,15 @@ import { useTranslations } from 'next-intl';
 import { IncidentStatuses } from '@/lib/constants';
 
 interface IncidentCardProps {
-  incident: any; // Changed to 'any' to prevent TS errors from our demo mock data missing DB fields
+  incident: any;
   technicianId: string;
 }
 
 export function IncidentCard({ incident, technicianId }: IncidentCardProps) {
   const t = useTranslations('technician');
-  const router = useRouter(); // <-- ADDED
+  const router = useRouter();
+  // Track the status locally so we can update it instantly
+  const [localStatus, setLocalStatus] = useState(incident.status);
   const [isUpdating, setIsUpdating] = useState(false);
 
   const getPriorityStyles = (priority: string) => {
@@ -28,24 +30,36 @@ export function IncidentCard({ incident, technicianId }: IncidentCardProps) {
   };
 
   const handleStatusUpdate = async (newStatus: string) => {
-    alert(`BUTTON CLICKED! Trying to update to: ${newStatus}`); 
-    console.log("Button clicked! Updating to:", newStatus); // <-- ADDED: For debugging
     setIsUpdating(true);
+    
+    // OPTIMISTIC UPDATE: Update UI immediately for instant feedback
+    setLocalStatus(newStatus);
+    
     const resolvedAt = newStatus === IncidentStatuses.RESOLVED ? new Date().toISOString() : undefined;
     
-    const res = await updateIncidentStatusAction(
-      incident.incidentId,
-      newStatus,
-      technicianId,
-      resolvedAt
-    );
+    try {
+      const res = await updateIncidentStatusAction(
+        incident.incidentId,
+        newStatus,
+        technicianId,
+        resolvedAt
+      );
 
-    if (res.success) {
-      router.refresh(); // <-- ADDED: This is the magic! It tells Next.js to re-fetch the updated data
-    } else {
-      alert(res.message || "Failed to update status");
+      if (!res.success) {
+        // If it fails, revert back
+        setLocalStatus(incident.status);
+        alert(res.message || "Failed to update status");
+      } else {
+        // Success! Refresh the page to sync with server
+        router.refresh();
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+      setLocalStatus(incident.status);
+      alert("An error occurred while updating the status");
+    } finally {
+      setIsUpdating(false);
     }
-    setIsUpdating(false);
   };
 
   const timeAgo = (dateString: string) => {
@@ -90,7 +104,8 @@ export function IncidentCard({ incident, technicianId }: IncidentCardProps) {
 
       {/* Action Buttons */}
       <div className="flex gap-2 pt-2 border-t border-border">
-        {incident.status === IncidentStatuses.OPEN && (
+        {/* Use localStatus instead of incident.status for instant UI updates */}
+        {localStatus === IncidentStatuses.OPEN && (
           <button
             onClick={() => handleStatusUpdate(IncidentStatuses.IN_PROGRESS)}
             disabled={isUpdating}
@@ -101,7 +116,7 @@ export function IncidentCard({ incident, technicianId }: IncidentCardProps) {
           </button>
         )}
 
-        {incident.status === IncidentStatuses.IN_PROGRESS && (
+        {localStatus === IncidentStatuses.IN_PROGRESS && (
           <button
             onClick={() => handleStatusUpdate(IncidentStatuses.RESOLVED)}
             disabled={isUpdating}
@@ -112,7 +127,7 @@ export function IncidentCard({ incident, technicianId }: IncidentCardProps) {
           </button>
         )}
 
-        {incident.status === IncidentStatuses.RESOLVED && (
+        {localStatus === IncidentStatuses.RESOLVED && (
           <div className="flex-1 flex items-center justify-center gap-2 h-10 rounded-lg bg-muted text-muted-foreground font-bold text-sm border border-border">
             <CheckCircle2 className="h-4 w-4 text-success" />
             {t('resolved')}
