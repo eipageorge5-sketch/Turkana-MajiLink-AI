@@ -17,7 +17,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
@@ -25,7 +25,8 @@ export default function LoginPage() {
     const result = await signIn('credentials', {
       email,
       password,
-      redirect: false, // We handle redirection manually to preserve locale
+      role: 'TECHNICIAN', // Explicitly pass the role for the demo
+      redirect: false, // We handle redirection manually
     });
 
     if (result?.error) {
@@ -33,18 +34,8 @@ export default function LoginPage() {
       setError('Invalid email or password. Please check your credentials.');
       setLoading(false);
     } else {
-      // Extract locale from current pathname (e.g., '/en/login' -> 'en')
-      const locale = pathname.split('/')[1] || 'en';
-      
-      // Smart redirect based on the email for our demo
-      if (email.includes('tech')) {
-        router.push(`/${locale}/technician`);
-      } else if (email.includes('admin')) {
-        router.push(`/${locale}/admin`); 
-      } else {
-        // Fallback to technician dashboard for the demo
-        router.push(`/${locale}/technician`); 
-      }
+      // BULLETPROOF DEMO REDIRECT: Go exactly to the URL we know works
+      router.push('/en/technician');
     }
   };
 
