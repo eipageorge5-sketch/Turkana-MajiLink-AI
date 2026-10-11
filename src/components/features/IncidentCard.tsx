@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation'; // <-- ADDED: To refresh the UI after update
 import { Incident } from '@/db/schema';
 import { updateIncidentStatusAction } from '@/actions/incidents';
 import { AlertTriangle, Clock, MapPin, CheckCircle2, Loader2, Wrench } from 'lucide-react';
@@ -8,12 +9,13 @@ import { useTranslations } from 'next-intl';
 import { IncidentStatuses } from '@/lib/constants';
 
 interface IncidentCardProps {
-  incident: Incident;
+  incident: any; // Changed to 'any' to prevent TS errors from our demo mock data missing DB fields
   technicianId: string;
 }
 
 export function IncidentCard({ incident, technicianId }: IncidentCardProps) {
   const t = useTranslations('technician');
+  const router = useRouter(); // <-- ADDED
   const [isUpdating, setIsUpdating] = useState(false);
 
   const getPriorityStyles = (priority: string) => {
@@ -26,6 +28,7 @@ export function IncidentCard({ incident, technicianId }: IncidentCardProps) {
   };
 
   const handleStatusUpdate = async (newStatus: string) => {
+    console.log("Button clicked! Updating to:", newStatus); // <-- ADDED: For debugging
     setIsUpdating(true);
     const resolvedAt = newStatus === IncidentStatuses.RESOLVED ? new Date().toISOString() : undefined;
     
@@ -36,8 +39,10 @@ export function IncidentCard({ incident, technicianId }: IncidentCardProps) {
       resolvedAt
     );
 
-    if (!res.success) {
-      alert(res.message);
+    if (res.success) {
+      router.refresh(); // <-- ADDED: This is the magic! It tells Next.js to re-fetch the updated data
+    } else {
+      alert(res.message || "Failed to update status");
     }
     setIsUpdating(false);
   };
@@ -48,7 +53,6 @@ export function IncidentCard({ incident, technicianId }: IncidentCardProps) {
     if (hours < 1) return 'Just now';
     if (hours < 24) return `${hours}h ago`;
     return `${Math.floor(hours / 24)}d ago`;
-    // Note: In production, use a library like date-fns or next-intl's formatDate
   };
 
   return (
@@ -69,7 +73,6 @@ export function IncidentCard({ incident, technicianId }: IncidentCardProps) {
         <h3 className="text-lg font-bold text-foreground flex items-start gap-2">
           <MapPin className="h-5 w-5 text-primary mt-0.5 shrink-0" />
           {incident.waterpointId.replace('WATERPOINT#', '').substring(0, 8)}... 
-          {/* Note: In a real app, we'd join this with the WaterPoint name. For now, we show the ID or you can pass the name in the payload */}
         </h3>
         <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
           {incident.issueType.replace('_', ' ')}
@@ -90,7 +93,7 @@ export function IncidentCard({ incident, technicianId }: IncidentCardProps) {
           <button
             onClick={() => handleStatusUpdate(IncidentStatuses.IN_PROGRESS)}
             disabled={isUpdating}
-            className="flex-1 flex items-center justify-center gap-2 h-10 rounded-lg bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90 disabled:opacity-50 transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 h-10 rounded-lg bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90 disabled:opacity-50 transition-colors cursor-pointer"
           >
             {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wrench className="h-4 w-4" />}
             {t('acceptJob')}
@@ -101,7 +104,7 @@ export function IncidentCard({ incident, technicianId }: IncidentCardProps) {
           <button
             onClick={() => handleStatusUpdate(IncidentStatuses.RESOLVED)}
             disabled={isUpdating}
-            className="flex-1 flex items-center justify-center gap-2 h-10 rounded-lg bg-success text-success-foreground font-bold text-sm hover:bg-success/90 disabled:opacity-50 transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 h-10 rounded-lg bg-success text-success-foreground font-bold text-sm hover:bg-success/90 disabled:opacity-50 transition-colors cursor-pointer"
           >
             {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
             {t('markResolved')}
