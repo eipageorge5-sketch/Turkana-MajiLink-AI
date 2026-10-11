@@ -49,11 +49,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             name: "Jane Citizen", role: UserRoles.CITIZEN, tenantId: "turkana", 
             preferredLanguage: SupportedLocales.EN 
           },
-                    { 
+          { 
             id: "ngo-001", email: "ngo@majilink.com", password: "password", 
             name: "UNICEF Partner", role: "NGO_PARTNER", tenantId: "turkana", 
             preferredLanguage: SupportedLocales.EN 
-          }
+          },
         ];
 
         const user = mockUsers.find(
