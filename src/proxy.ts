@@ -8,7 +8,7 @@ import { UserRoles } from './lib/constants';
 const protectedRoutes: Record<string, string[]> = {
   '/admin': [UserRoles.ADMIN],
   '/county': [UserRoles.COUNTY_OFFICIAL, UserRoles.ADMIN],
-  '/ngo': [UserRoles.NGO_STAFF, UserRoles.ADMIN],
+  '/ngo': ['NGO_PARTNER', UserRoles.ADMIN],
   '/committee': [UserRoles.COMMITTEE_LEADER, UserRoles.COUNTY_OFFICIAL, UserRoles.ADMIN],
   '/technician': [UserRoles.TECHNICIAN, UserRoles.ADMIN],
   '/citizen': [UserRoles.CITIZEN, UserRoles.TECHNICIAN, UserRoles.COMMITTEE_LEADER, UserRoles.COUNTY_OFFICIAL, UserRoles.NGO_STAFF, UserRoles.ADMIN],
@@ -54,10 +54,10 @@ export default auth((req) => {
   TECHNICIAN: '/technician',
   COUNTY_OFFICIAL: '/county',
   COMMITTEE_LEADER: '/committee',
-  NGO_PARTNER: '/ngo', // <-- ADD THIS LINE!
+  NGO_PARTNER: '/ngo', 
   CITIZEN: '/citizen',
 }; 
-            // DEMO SAFE FALLBACK: If we don't know their exact dashboard, 
+            // DEMO SAFE FALLBACK: If don't know their exact dashboard, 
       // always send them to the technician dashboard so they never see a 404.
       const targetDashboard = defaultDashboards[userRole] || '/technician'; 
       const redirectPath = `/${locale}${targetDashboard}`;
