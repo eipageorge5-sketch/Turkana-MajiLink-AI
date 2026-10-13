@@ -10,8 +10,11 @@ export default function CitizenReportingPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [trackingId, setTrackingId] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // State to hold the history of reports
   const [myReports, setMyReports] = useState<any[]>([]);
 
+  // Mock form state
   const [formData, setFormData] = useState({
     waterpoint: '',
     issueType: '',
@@ -22,10 +25,12 @@ export default function CitizenReportingPage() {
     e.preventDefault();
     setIsSubmitting(true);
 
+    // Simulate network request and ID generation
     setTimeout(() => {
       const newId = `ML-${Math.floor(1000 + Math.random() * 9000)}`;
       setTrackingId(newId);
       
+      // Add the new report to our history list
       const newReport = {
         id: newId,
         waterpoint: formData.waterpoint,
@@ -34,69 +39,33 @@ export default function CitizenReportingPage() {
         date: new Date().toLocaleDateString()
       };
       
-      setMyReports(prev => [newReport, ...prev]);
+      setMyReports(prev => [newReport, ...prev]); // Adds to top of list
       setIsSubmitted(true);
       setIsSubmitting(false);
     }, 1500);
   };
 
-  return (
-    <div className="max-w-2xl mx-auto pb-20 space-y-8">
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-foreground flex items-center gap-3">
-          <Droplets className="h-8 w-8 text-primary" />
-          Citizen Reporting Hub
-        </h1>
-        <p className="text-muted-foreground mt-1">Report issues and track their resolution in real-time.</p>
-      </div>
-
-      {myReports.length > 0 && (
-        <div className="space-y-4">
-          <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-            <FileText className="h-5 w-5 text-muted-foreground" />
-            My Reports
-          </h2>
-          <div className="space-y-3">
-            {myReports.map((report) => (
-              <div key={report.id} className="bg-card border-2 border-border rounded-xl p-4 flex items-center justify-between gap-4 shadow-sm">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="font-mono text-xs font-bold bg-primary/10 text-primary px-2 py-0.5 rounded border border-primary/20">
-                      {report.id}
-                    </span>
-                    <span className="text-xs text-muted-foreground">{report.date}</span>
-                  </div>
-                  <p className="font-semibold text-foreground">{report.issueType}</p>
-                  <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
-                    <MapPin className="h-3 w-3" /> {report.waterpoint}
-                  </p>
-                </div>
-                <div className="shrink-0">
-                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700 border border-amber-200 flex items-center gap-1">
-                    <Clock className="h-3 w-3" /> {report.status}
-                  </span>
-                </div>
-              </div>
-            ))}
+  if (isSubmitted) {
+    return (
+      <div className="max-w-2xl mx-auto pb-20 space-y-6">
+        {/* Success Header */}
+        <div className="text-center space-y-3 py-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 text-green-600 mb-4">
+            <CheckCircle className="h-8 w-8" />
           </div>
+          <h1 className="text-2xl font-bold text-foreground">Report Submitted Successfully!</h1>
+          <p className="text-muted-foreground">Your report has been securely logged and sent to your local Village Committee for verification.</p>
         </div>
-      )}
 
-      {isSubmitted ? (
-        <div className="bg-card border-2 border-border rounded-xl p-6 space-y-6 shadow-sm">
-          <div className="text-center space-y-3 py-4">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 text-green-600 mb-4">
-              <CheckCircle className="h-8 w-8" />
-            </div>
-            <h2 className="text-2xl font-bold text-foreground">Report Submitted!</h2>
-            <p className="text-muted-foreground">Your report has been securely logged and sent to your local Village Committee.</p>
-          </div>
-
+        {/* Tracking Card */}
+        <div className="bg-card border-2 border-border rounded-xl p-6 space-y-6">
           <div className="text-center pb-6 border-b border-border">
             <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-1">Your Tracking ID</p>
             <p className="text-3xl font-mono font-bold text-primary">{trackingId}</p>
+            <p className="text-xs text-muted-foreground mt-2">Save this ID to check your status later via SMS or this app.</p>
           </div>
 
+          {/* Visual Timeline */}
           <div className="space-y-6">
             <h3 className="font-bold text-foreground flex items-center gap-2">
               <Clock className="h-4 w-4" /> Live Status Timeline
@@ -148,81 +117,131 @@ export default function CitizenReportingPage() {
             <ArrowRight className="h-4 w-4" /> Report Another Issue
           </button>
         </div>
-      ) : (
-        <form onSubmit={handleSubmit} className="bg-card border-2 border-border rounded-xl p-6 space-y-5 shadow-sm">
-          <h2 className="text-xl font-bold text-foreground flex items-center gap-2 mb-2">
-            <AlertTriangle className="h-5 w-5 text-warning" /> New Report
+      </div>
+    );
+  }
+
+  // Form View
+  return (
+    <div className="max-w-2xl mx-auto pb-20 space-y-8">
+      <div>
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground flex items-center gap-3">
+          <Droplets className="h-8 w-8 text-primary" />
+          Citizen Reporting Hub
+        </h1>
+        <p className="text-muted-foreground mt-1">Help us keep our community waterpoints functioning. Your report is anonymous and secure.</p>
+      </div>
+
+      {/* MY REPORTS HISTORY SECTION (Only shows if there are reports) */}
+      {myReports.length > 0 && (
+        <div className="space-y-4">
+          <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+            <FileText className="h-5 w-5 text-muted-foreground" />
+            My Reports
           </h2>
-
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-foreground flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-primary" /> Waterpoint Location
-            </label>
-            <select 
-              required
-              value={formData.waterpoint}
-              onChange={(e) => setFormData({...formData, waterpoint: e.target.value})}
-              className="w-full h-11 px-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-            >
-              <option value="" disabled>Select a waterpoint...</option>
-              <option value="Community Borehole #4">Community Borehole #4 (Kakuma)</option>
-              <option value="School Pump #2">School Pump #2 (Lodwar)</option>
-              <option value="Market Square Tank">Market Square Tank (Lopei)</option>
-              <option value="Other">Other / Not Listed</option>
-            </select>
+          <div className="space-y-3">
+            {myReports.map((report) => (
+              <div key={report.id} className="bg-card border-2 border-border rounded-xl p-4 flex items-center justify-between gap-4 shadow-sm">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-mono text-xs font-bold bg-primary/10 text-primary px-2 py-0.5 rounded border border-primary/20">
+                      {report.id}
+                    </span>
+                    <span className="text-xs text-muted-foreground">{report.date}</span>
+                  </div>
+                  <p className="font-semibold text-foreground">{report.issueType}</p>
+                  <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
+                    <MapPin className="h-3 w-3" /> {report.waterpoint}
+                  </p>
+                </div>
+                <div className="shrink-0">
+                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700 border border-amber-200 flex items-center gap-1">
+                    <Clock className="h-3 w-3" /> {report.status}
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-foreground flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4 text-warning" /> Type of Issue
-            </label>
-            <select 
-              required
-              value={formData.issueType}
-              onChange={(e) => setFormData({...formData, issueType: e.target.value})}
-              className="w-full h-11 px-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-            >
-              <option value="" disabled>Select an issue...</option>
-              <option value="No Water Flow">No Water Flow</option>
-              <option value="Broken Handle/Mechanical">Broken Handle / Mechanical Failure</option>
-              <option value="Leakage">Visible Leakage</option>
-              <option value="Water Quality">Water Quality (Taste/Smell/Color)</option>
-            </select>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-foreground">Additional Details (Optional)</label>
-            <textarea 
-              rows={4}
-              placeholder="Describe the problem in detail..."
-              value={formData.description}
-              onChange={(e) => setFormData({...formData, description: e.target.value})}
-              className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={isSubmitting || !formData.waterpoint || !formData.issueType}
-            className="w-full flex items-center justify-center gap-2 h-12 rounded-lg bg-primary text-primary-foreground font-bold text-base hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer shadow-md"
-          >
-            {isSubmitting ? (
-              <>
-                <span className="h-5 w-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                Submitting Report...
-              </>
-            ) : (
-              <>
-                <Send className="h-5 w-5" /> Submit Report
-              </>
-            )}
-          </button>
-          
-          <p className="text-xs text-center text-muted-foreground">
-            In low-network areas, this report will be queued and sent automatically when connectivity returns.
-          </p>
-        </form>
+        </div>
       )}
+
+      <form onSubmit={handleSubmit} className="bg-card border-2 border-border rounded-xl p-6 space-y-5 shadow-sm">
+        <h2 className="text-xl font-bold text-foreground flex items-center gap-2 mb-2">
+          <AlertTriangle className="h-5 w-5 text-warning" /> New Report
+        </h2>
+
+        {/* Waterpoint Selection */}
+        <div className="space-y-2">
+          <label className="text-sm font-semibold text-foreground flex items-center gap-2">
+            <MapPin className="h-4 w-4 text-primary" /> Waterpoint Location
+          </label>
+          <select 
+            required
+            value={formData.waterpoint}
+            onChange={(e) => setFormData({...formData, waterpoint: e.target.value})}
+            className="w-full h-11 px-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+          >
+            <option value="" disabled>Select a waterpoint...</option>
+            <option value="Community Borehole #4">Community Borehole #4 (Kakuma)</option>
+            <option value="School Pump #2">School Pump #2 (Lodwar)</option>
+            <option value="Market Square Tank">Market Square Tank (Lopei)</option>
+            <option value="Other">Other / Not Listed</option>
+          </select>
+        </div>
+
+        {/* Issue Type */}
+        <div className="space-y-2">
+          <label className="text-sm font-semibold text-foreground flex items-center gap-2">
+            <AlertTriangle className="h-4 w-4 text-warning" /> Type of Issue
+          </label>
+          <select 
+            required
+            value={formData.issueType}
+            onChange={(e) => setFormData({...formData, issueType: e.target.value})}
+            className="w-full h-11 px-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+          >
+            <option value="" disabled>Select an issue...</option>
+            <option value="No Water Flow">No Water Flow</option>
+            <option value="Broken Handle/Mechanical">Broken Handle / Mechanical Failure</option>
+            <option value="Leakage">Visible Leakage</option>
+            <option value="Water Quality">Water Quality (Taste/Smell/Color)</option>
+          </select>
+        </div>
+
+        {/* Description */}
+        <div className="space-y-2">
+          <label className="text-sm font-semibold text-foreground">Additional Details (Optional)</label>
+          <textarea 
+            rows={4}
+            placeholder="Describe the problem in detail (e.g., 'The handle is completely detached...')"
+            value={formData.description}
+            onChange={(e) => setFormData({...formData, description: e.target.value})}
+            className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
+          />
+        </div>
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={isSubmitting || !formData.waterpoint || !formData.issueType}
+          className="w-full flex items-center justify-center gap-2 h-12 rounded-lg bg-primary text-primary-foreground font-bold text-base hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer shadow-md"
+        >
+          {isSubmitting ? (
+            <>
+              <span className="h-5 w-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+              Submitting Report...
+            </>
+          ) : (
+            <>
+              <Send className="h-5 w-5" /> Submit Report
+            </>
+          )}
+        </button>
+        
+        <p className="text-xs text-center text-muted-foreground">
+          In low-network areas, this report will be queued and sent automatically when connectivity returns.
+        </p>
+      </form>
     </div>
   );
 }
