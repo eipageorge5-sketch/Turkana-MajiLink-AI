@@ -6,24 +6,12 @@ import {
   Clock, ArrowRight, Smartphone, Send, FileText 
 } from 'lucide-react';
 
-// Define the shape of a report
-interface Report {
-  id: string;
-  waterpoint: string;
-  issueType: string;
-  status: string;
-  date: string;
-}
-
 export default function CitizenReportingPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [trackingId, setTrackingId] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  // State to hold the history of reports
-  const [myReports, setMyReports] = useState<Report[]>([]);
+  const [myReports, setMyReports] = useState<any[]>([]);
 
-  // Mock form state
   const [formData, setFormData] = useState({
     waterpoint: '',
     issueType: '',
@@ -34,13 +22,11 @@ export default function CitizenReportingPage() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate network request and ID generation
     setTimeout(() => {
       const newId = `ML-${Math.floor(1000 + Math.random() * 9000)}`;
       setTrackingId(newId);
       
-      // Add the new report to our history list
-      const newReport: Report = {
+      const newReport = {
         id: newId,
         waterpoint: formData.waterpoint,
         issueType: formData.issueType,
@@ -48,7 +34,7 @@ export default function CitizenReportingPage() {
         date: new Date().toLocaleDateString()
       };
       
-      setMyReports(prev => [newReport, ...prev]); // Add to top of list
+      setMyReports(prev => [newReport, ...prev]);
       setIsSubmitted(true);
       setIsSubmitting(false);
     }, 1500);
@@ -56,7 +42,6 @@ export default function CitizenReportingPage() {
 
   return (
     <div className="max-w-2xl mx-auto pb-20 space-y-8">
-      {/* Header */}
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold text-foreground flex items-center gap-3">
           <Droplets className="h-8 w-8 text-primary" />
@@ -65,7 +50,6 @@ export default function CitizenReportingPage() {
         <p className="text-muted-foreground mt-1">Report issues and track their resolution in real-time.</p>
       </div>
 
-      {/* 1. My Reports History (Only shows if there are reports) */}
       {myReports.length > 0 && (
         <div className="space-y-4">
           <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
@@ -98,9 +82,7 @@ export default function CitizenReportingPage() {
         </div>
       )}
 
-      {/* 2. Form or Success Screen */}
       {isSubmitted ? (
-        // SUCCESS SCREEN
         <div className="bg-card border-2 border-border rounded-xl p-6 space-y-6 shadow-sm">
           <div className="text-center space-y-3 py-4">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 text-green-600 mb-4">
@@ -115,7 +97,6 @@ export default function CitizenReportingPage() {
             <p className="text-3xl font-mono font-bold text-primary">{trackingId}</p>
           </div>
 
-          {/* Visual Timeline */}
           <div className="space-y-6">
             <h3 className="font-bold text-foreground flex items-center gap-2">
               <Clock className="h-4 w-4" /> Live Status Timeline
@@ -168,13 +149,11 @@ export default function CitizenReportingPage() {
           </button>
         </div>
       ) : (
-        // REPORT FORM
         <form onSubmit={handleSubmit} className="bg-card border-2 border-border rounded-xl p-6 space-y-5 shadow-sm">
           <h2 className="text-xl font-bold text-foreground flex items-center gap-2 mb-2">
             <AlertTriangle className="h-5 w-5 text-warning" /> New Report
           </h2>
 
-          {/* Waterpoint Selection */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-foreground flex items-center gap-2">
               <MapPin className="h-4 w-4 text-primary" /> Waterpoint Location
@@ -193,7 +172,6 @@ export default function CitizenReportingPage() {
             </select>
           </div>
 
-          {/* Issue Type */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-foreground flex items-center gap-2">
               <AlertTriangle className="h-4 w-4 text-warning" /> Type of Issue
@@ -212,7 +190,6 @@ export default function CitizenReportingPage() {
             </select>
           </div>
 
-          {/* Description */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-foreground">Additional Details (Optional)</label>
             <textarea 
@@ -224,7 +201,6 @@ export default function CitizenReportingPage() {
             />
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={isSubmitting || !formData.waterpoint || !formData.issueType}
