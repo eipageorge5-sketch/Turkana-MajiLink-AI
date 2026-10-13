@@ -8,10 +8,10 @@ import { UserRoles } from './lib/constants';
 const protectedRoutes: Record<string, string[]> = {
   '/admin': [UserRoles.ADMIN],
   '/county': [UserRoles.COUNTY_OFFICIAL, UserRoles.ADMIN],
-  '/ngo': ['NGO_PARTNER', UserRoles.ADMIN],
+  '/ngo': [UserRoles.NGO_PARTNER, UserRoles.ADMIN], // <-- FIXED: Changed to NGO_PARTNER
   '/committee': [UserRoles.COMMITTEE_LEADER, UserRoles.COUNTY_OFFICIAL, UserRoles.ADMIN],
   '/technician': [UserRoles.TECHNICIAN, UserRoles.ADMIN],
-  '/citizen': [UserRoles.CITIZEN, UserRoles.TECHNICIAN, UserRoles.COMMITTEE_LEADER, UserRoles.COUNTY_OFFICIAL, UserRoles.NGO_STAFF, UserRoles.ADMIN],
+  '/citizen': [UserRoles.CITIZEN, UserRoles.TECHNICIAN, UserRoles.COMMITTEE_LEADER, UserRoles.COUNTY_OFFICIAL, UserRoles.NGO_PARTNER, UserRoles.ADMIN], // <-- FIXED: Changed to NGO_PARTNER
 };
 
 // 2. Initialize next-intl middleware
@@ -23,7 +23,6 @@ export default auth((req) => {
   const pathname = nextUrl.pathname;
 
   // Extract the route segment after the locale (e.g., /en/admin -> /admin)
-  // The locale is always the first segment
   const segments = pathname.split('/').filter(Boolean);
   const locale = segments[0] || routing.defaultLocale;
   const routeSegment = segments.slice(1).join('/');
@@ -48,17 +47,16 @@ export default auth((req) => {
     // User is authenticated. Check if they have the required role.
     const userRole = req.auth.user?.role;
     if (!userRole || !requiredRoles.includes(userRole)) {
-      // Unauthorized: Redirect to their specific dashboard or a 403 page
+      // Unauthorized: Redirect to their specific dashboard
       const defaultDashboards: Record<string, string> = {
-  ADMIN: '/admin',
-  TECHNICIAN: '/technician',
-  COUNTY_OFFICIAL: '/county',
-  COMMITTEE_LEADER: '/committee',
-  NGO_PARTNER: '/ngo', 
-  CITIZEN: '/citizen',
-}; 
-            // DEMO SAFE FALLBACK: If don't know their exact dashboard, 
-      // always send them to the technician dashboard so they never see a 404.
+        ADMIN: '/admin',
+        TECHNICIAN: '/technician',
+        COUNTY_OFFICIAL: '/county',
+        COMMITTEE_LEADER: '/committee',
+        NGO_PARTNER: '/ngo', 
+        CITIZEN: '/citizen',
+      }; 
+      
       const targetDashboard = defaultDashboards[userRole] || '/technician'; 
       const redirectPath = `/${locale}${targetDashboard}`;
       return NextResponse.redirect(new URL(redirectPath, nextUrl.origin));
@@ -70,6 +68,5 @@ export default auth((req) => {
 });
 
 export const config = {
-  // Match all paths except static files, api routes (handled by NextAuth), and _next
   matcher: ['/((?!api|_next/static|_next/image|favicon.ico|icons|manifest.json|sw.js).*)']
 };
